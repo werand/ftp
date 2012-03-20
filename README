@@ -1,0 +1,30 @@
+# ftp
+
+Thin wrapper around the apache commons ftp-client.
+
+## Usage
+
+Usage example:
+
+(def connection {
+                 :url "ftp.server.url",
+                 :user "username",
+                 :password "password",
+                 :transfer-mode :binary)
+
+(with-ftp connection
+  (prn (exists-remotely? "some/file")))
+
+;; Binding of ftp-client to the ftp-client, so any method can be called on the client-api
+(with-ftp-client ftp-client connection
+  (.logout ftp-client)
+  (prn (exists-remotely? "some/file")))
+
+The last example will throw a SocketException, because the connection is closed when then
+exists-remotely method is called.
+
+## License
+
+Copyright (C) 2012 Andreas Werner
+
+Distributed under the Eclipse Public License, the same as Clojure.

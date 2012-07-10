@@ -6,22 +6,22 @@ Thin wrapper around the apache commons ftp-client.
 
 Usage example:
 
-(def connection {
+(def *connection* {
                  :url "ftp.server.url",
                  :user "username",
                  :password "password",
-                 :transfer-mode :binary)
+                 :transfer-mode :binary})
+;; Transfer-mode may be one of :binary or :ascii if none is specified it will be :binary 
 
-(with-ftp connection
-  (prn (exists-remotely? "some/file")))
+(with-ftp *connection*
+  ((exists-remotely? "some/file")))
 
 ;; Binding of ftp-client to the ftp-client, so any method can be called on the client-api
-(with-ftp-client ftp-client connection
+(with-ftp-client ftp-client *connection*
   (.logout ftp-client)
   (prn (exists-remotely? "some/file")))
 
-The last example will throw a SocketException, because the connection is closed when then
-exists-remotely method is called.
+The last example will throw a SocketException, because the connection is closed when then exists-remotely method is called ;-)
 
 ## License
 

@@ -56,5 +56,8 @@
 
 
 (defn get-bytearray [remote-filename]
-  (get-bytearray remote-filename))
+  (get-bytearray* remote-filename))
 
+
+(defn slurp [remote-filename & opts]
+  (apply slurp* remote-filename opts))

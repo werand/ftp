@@ -15,7 +15,7 @@
 (ns
   ftp.internal.internal
   (:import 
-    (java.io IOException FileOutputStream FileInputStream File ByteArrayOutputStream ByteArrayInputStream ObjectOutputStream ObjectInputStream)
+    (java.io IOException FileOutputStream FileInputStream File ByteArrayOutputStream ByteArrayInputStream ObjectOutputStream ObjectInputStream InputStreamReader)
     (java.net SocketException)
     (org.apache.commons.net.ftp FTP FTPClient FTPFile)))
 
@@ -94,3 +94,32 @@
   (with-open [os (ByteArrayOutputStream.)]
     (.retrieveFile (ftp-client*) remote-filename os)
     (.toByteArray os)))
+
+
+(require '[clojure.java.io :as jio])
+
+
+(defn- normalize-slurp-opts
+  [opts]
+  (if (string? (first opts))
+    (do
+      (println "WARNING: (slurp f enc) is deprecated, use (slurp f :encoding enc).")
+      [:encoding (first opts)])
+    opts))
+
+
+(defn slurp* 
+    "Opens a reader on f and reads all its contents, returning a string.
+	  See clojure.java.io/reader for a complete list of supported arguments."
+  {:added "1.0"}
+  ([f & opts]
+     (let [opts (normalize-slurp-opts opts)
+           sb (StringBuilder.)]
+       (with-open [#^java.io.BufferedReader r 
+                   (apply jio/reader (.retrieveFileStream (ftp-client*) f) opts)]
+         (loop [c (.read r)]
+           (if (neg? c)
+             (str sb)
+             (do
+               (.append sb (char c))
+               (recur (.read r)))))))))

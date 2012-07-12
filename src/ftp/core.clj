@@ -61,3 +61,7 @@
 
 (defn slurp [remote-filename & opts]
   (apply slurp* remote-filename opts))
+
+
+(defn spit [remote-filename content & opts]
+  (apply spit* remote-filename content opts))
